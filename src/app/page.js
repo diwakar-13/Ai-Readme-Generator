@@ -12,14 +12,11 @@ export default function Home() {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      const mockUserId = "user_test_123";
-      const result = await handleRepoSubmisson(message, mockUserId);
+      const result = await handleRepoSubmisson(message);
 
       if (!result.success) {
         setErrorMessage(result?.error);
-        alert(`Validation Error: ${result?.error}`);
       } else {
-        alert(`Server Response: ${result?.message}`);
         console.log("Repository meta verified successfully!", result);
       }
     } catch (error) {
