@@ -271,13 +271,13 @@ export default function RepoTextarea({
 
         <form
           onSubmit={handleSubmit}
-          className="relative p-3 sm:p-4"
+          className="relative p-3 sm:p-3"
         >
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2">
             {/* GitHub Icon */}
 
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted/50 sm:h-11 sm:w-11">
-              <FaGithub className="h-5 w-5" />
+            <div className="flex  shrink-0 items-center justify-center  sm:h-11 sm:w-11">
+              <FaGithub size={24} />
             </div>
 
             {/* Repository URL Input */}
@@ -337,8 +337,8 @@ export default function RepoTextarea({
             >
               {/* Desktop / Tablet Text */}
 
-              <span className="hidden sm:inline">
-                Generate README
+              <span className="hidden  sm:inline">
+                Generate 
               </span>
 
               {/* Arrow */}

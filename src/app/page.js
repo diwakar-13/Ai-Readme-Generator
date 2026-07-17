@@ -2,10 +2,32 @@
 import BackgroundUi from "@/components/ethreal-shadow";
 import Navbar from "./_components/Navbar";
 import RepoTextarea from "@/components/RepoTextarea";
+import { useState } from "react";
+import { handleRepoSubmisson } from "@/actions/projectAction";
 
 export default function Home() {
-  const handleSend = (message) => {
-    alert("Message sent:", message);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleSend = async (message) => {
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const mockUserId = "user_test_123";
+      const result = await handleRepoSubmisson(message, mockUserId);
+
+      if (!result.success) {
+        setErrorMessage(result?.error);
+        alert(`Validation Error: ${result?.error}`);
+      } else {
+        alert(`Server Response: ${result?.message}`);
+        console.log("Repository meta verified successfully!", result);
+      }
+    } catch (error) {
+      console.error("UI Submission Pipeline Error:", error);
+      setErrorMessage("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,8 +55,21 @@ export default function Home() {
           <RepoTextarea
             placeholder="Paste your GitHub repository URL..."
             onSend={handleSend}
+            disabled={isLoading}
           />
         </div>
+        {/* Technical feedback error message block if validation fails */}
+        {errorMessage && (
+          <p className="mt-4 text-sm font-medium text-red-400 bg-red-950/30 border border-red-900/50 px-4 py-2 rounded-lg backdrop-blur-sm">
+            ⚠️ {errorMessage}
+          </p>
+        )}
+
+        {isLoading && (
+          <p className="mt-4 text-sm font-medium text-blue-400 animate-pulse">
+            Analyzing repository architecture... Please wait.
+          </p>
+        )}
       </div>
     </div>
   );
