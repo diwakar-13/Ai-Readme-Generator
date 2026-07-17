@@ -17,7 +17,7 @@ export async function syncUserToDb() {
       .from(users)
       .where(eq(users?.id, user?.id));
 
-    if (existingUser > 0) {
+    if (existingUser.length > 0) {
       return {
         success: true,
         message: "User already exists",
