@@ -4,10 +4,13 @@ import Navbar from "./_components/Navbar";
 import RepoTextarea from "@/components/RepoTextarea";
 import { useState } from "react";
 import { handleRepoSubmisson } from "@/actions/projectAction";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
   const handleSend = async (message) => {
     setIsLoading(true);
     setErrorMessage("");
@@ -17,7 +20,7 @@ export default function Home() {
       if (!result.success) {
         setErrorMessage(result?.error);
       } else {
-        console.log("Repository meta verified successfully!", result);
+       router.push(`/dashboard/${result.projectId}`);
       }
     } catch (error) {
       console.error("UI Submission Pipeline Error:", error);
