@@ -1,6 +1,6 @@
 "use client";
 import BackgroundUi from "@/components/ethreal-shadow";
-import Navbar from "./_components/Navbar";
+import Navbar from "../components/Navbar";
 import RepoTextarea from "@/components/RepoTextarea";
 import { useState } from "react";
 import { handleRepoSubmisson } from "@/actions/projectAction";

@@ -1,0 +1,94 @@
+import { fetchGithubRepoData, getProjectDetail } from "@/actions/projectAction";
+import React from "react";
+
+const page = async ({ params }) => {
+  const { projectId } = await params;
+  
+  // 1. DB se project ki saari details lekar aaye
+  const result = await getProjectDetail(projectId);
+
+  if (!result || !result.success) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#09090b] text-red-400 font-medium">
+        ⚠️ Error: {result?.error || "Project not found"}
+      </div>
+    );
+  }
+  const project = result.project;
+
+  // 2. GitHub se architecture tree fetch kiya (Yeh sirf folder tree dikhane ke liye hai)
+  const githubResult = await fetchGithubRepoData(project?.repoUrl);
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-start bg-[#09090b] text-white p-8 gap-6">
+      
+      {/* HEADER SECTION WITH TECH BADGES */}
+      <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl max-w-2xl w-full text-left">
+        <p className="text-xs text-zinc-500 font-mono tracking-wider">PROJECT ID: {project.id}</p>
+        <h1 className="text-2xl font-bold mt-1 text-zinc-100">
+          🚀 {project.repoName}
+        </h1>
+        <p className="text-sm text-purple-400 mt-1 break-all font-mono">
+          {project.repoUrl}
+        </p>
+        
+        {/* Badges Layout (Direct DB se bin kisi loop jhanjhat ke) */}
+        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-zinc-800/60">
+          {project.techStack && project.techStack.length > 0 ? (
+            project.techStack.map((tech, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]"
+              >
+                {tech}
+              </span>
+            ))
+          ) : (
+            <span className="text-xs text-zinc-500 italic">No core tech detected.</span>
+          )}
+        </div>
+      </div>
+
+      {/* 📁 REPOSITORY ARCHITECTURE TREE PREVIEW SECTION */}
+      <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl max-w-2xl w-full text-left flex flex-col gap-3">
+        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider font-mono">
+          📂 Repository Architecture
+        </h2>
+
+        <div className="bg-[#050507] border border-zinc-800/80 p-4 rounded-lg h-80 overflow-y-auto font-mono text-xs text-zinc-300 antialiased scrollbar-thin scrollbar-thumb-zinc-800">
+          {githubResult.success && githubResult.tree ? (
+            githubResult.tree.map((node, index) => {
+              // Har node ka dynamic layout render kar rahe hain
+              const isFolder = node.type === "tree";
+              
+              return (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-2 py-0.5 hover:bg-zinc-800/30 px-1 rounded transition-colors group cursor-default"
+                >
+                  {/* Folder ke liye dynamic color/icon aur file ke liye alag */}
+                  {isFolder ? (
+                    <span className="text-amber-400 select-none">📁</span>
+                  ) : (
+                    <span className="text-zinc-500 select-none">📄</span>
+                  )}
+                  
+                  <span className={`tracking-wide ${isFolder ? "text-zinc-200 font-medium" : "text-zinc-400 group-hover:text-zinc-200"}`}>
+                    {node.path}
+                  </span>
+                </div>    
+              );
+            })
+          ) : (
+            <div className="text-rose-400 text-sm flex items-center justify-center h-full">
+              ✗ Error: {githubResult.error || "Failed to load repo layout."}
+            </div>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default page;
