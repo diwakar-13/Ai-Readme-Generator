@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { SidebarGroup } from "@/components/ui/sidebar";
 import {
   Field,
@@ -16,8 +11,13 @@ import {
 } from "@/components/ui/field";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
+import { useContext } from "react";
+import { WorkspaceContext } from "@/context/WorkspaceContext";
+import { Sparkle } from "lucide-react";
+import { Button } from "./ui/button";
 
-export function NavMain() {
+export function NavMain({ currentProject }) {
+  const { activeSections, toggleSection } = useContext(WorkspaceContext);
   return (
     <SidebarGroup>
       <Field>
@@ -26,6 +26,7 @@ export function NavMain() {
           id="input-demo-api-key"
           type="text"
           placeholder="e.g. Awesome Project"
+          defaultValue={currentProject?.repoName || ""}
         />
         <FieldDescription className="text-xs ">
           Edit the repository name if needed.
@@ -37,12 +38,13 @@ export function NavMain() {
         <FieldDescription>
           Choose the sections you want to include.
         </FieldDescription>
-        <FieldGroup className="gap-3 mt-0 max-h-[200px] bg-[#171717] rounded-xl p-2 overflow-y-auto overflow-y-auto">
+        <FieldGroup className="gap-3 mt-0 max-h-[200px] bg-[#171717] rounded-xl p-2 overflow-y-auto  scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
           <Field orientation="horizontal">
             <Checkbox
               id="project-overview-checkbox"
               name="project-overview-checkbox"
-              defaultChecked
+              checked={activeSections.projectOverview}
+              onCheckedChange={() => toggleSection("projectOverview")}
             />
             <FieldLabel
               htmlFor="project-overview-checkbox"
@@ -55,12 +57,10 @@ export function NavMain() {
             <Checkbox
               id="features-checkbox"
               name="features-checkbox"
-              defaultChecked
+              checked={activeSections.features}
+              onCheckedChange={() => toggleSection("features")}
             />
-            <FieldLabel
-              htmlFor="features-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="features-checkbox" className="font-normal">
               Features
             </FieldLabel>
           </Field>
@@ -68,11 +68,10 @@ export function NavMain() {
             <Checkbox
               id="installation-checkbox"
               name="installation-checkbox"
+              checked={activeSections.installation}
+              onCheckedChange={() => toggleSection("installation")}
             />
-            <FieldLabel
-              htmlFor="installation-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="installation-checkbox" className="font-normal">
               Installation
             </FieldLabel>
           </Field>
@@ -80,11 +79,10 @@ export function NavMain() {
             <Checkbox
               id="usage-checkbox"
               name="usage-checkbox"
+              checked={activeSections.usage}
+              onCheckedChange={() => toggleSection("usage")}
             />
-            <FieldLabel
-              htmlFor="usage-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="usage-checkbox" className="font-normal">
               Usage
             </FieldLabel>
           </Field>
@@ -92,11 +90,10 @@ export function NavMain() {
             <Checkbox
               id="tech-stack-checkbox"
               name="tech-stack-checkbox"
+              checked={activeSections.techStack}
+              onCheckedChange={() => toggleSection("techStack")}
             />
-            <FieldLabel
-              htmlFor="tech-stack-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="tech-stack-checkbox" className="font-normal">
               Tech Stack
             </FieldLabel>
           </Field>
@@ -104,11 +101,10 @@ export function NavMain() {
             <Checkbox
               id="project-structure"
               name="project-structure"
+              checked={activeSections.projectStructure}
+              onCheckedChange={() => toggleSection("projectStructure")}
             />
-            <FieldLabel
-              htmlFor="project-structure"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="project-structure" className="font-normal">
               Project Structure
             </FieldLabel>
           </Field>
@@ -116,6 +112,8 @@ export function NavMain() {
             <Checkbox
               id="api-reference-checkbox"
               name="api-reference-checkbox"
+              checked={activeSections.apiReference}
+              onCheckedChange={() => toggleSection("apiReference")}
             />
             <FieldLabel
               htmlFor="api-reference-checkbox"
@@ -128,28 +126,33 @@ export function NavMain() {
             <Checkbox
               id="contributing-checkbox"
               name="contributing-checkbox"
+              checked={activeSections.contributing}
+              onCheckedChange={() => toggleSection("contributing")}
             />
-            <FieldLabel
-              htmlFor="contributing-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="contributing-checkbox" className="font-normal">
               Contributing
             </FieldLabel>
           </Field>
+
           <Field orientation="horizontal">
             <Checkbox
               id="license-checkbox"
               name="license-checkbox"
+              checked={activeSections.license}
+              onCheckedChange={() => toggleSection("license")}
             />
-            <FieldLabel
-              htmlFor="license-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="license-checkbox" className="font-normal">
               License
             </FieldLabel>
           </Field>
         </FieldGroup>
       </FieldSet>
+      <Button
+        className="w-full mt-4 bg-primary font-medium py-2 rounded-lg text-xs"
+        onClick={() => alert("AI generation starting for selected sections!")}
+      >
+        <Sparkle /> Generate README
+      </Button>
     </SidebarGroup>
   );
 }
