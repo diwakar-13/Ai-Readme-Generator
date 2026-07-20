@@ -39,12 +39,12 @@ export function NavProjects({ projects }) {
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
 
 
-      <SidebarMenu className="bg-[#171717] rounded-xl p-2 max-h-[260px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
+      <SidebarMenu className="bg-accent rounded-xl p-2 max-h-[260px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
         {projects.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton
               onClick={() => router.push(`/dashboard/${item.id}`)}
-              className="cursor-pointer hover:bg-zinc-800 transition-colors"
+              className="cursor-pointer hover:bg-zinc-800 hover:text-accent hover:dark:text-accent-foreground transition-colors"
             >
               <span>{item.repoName}</span>
             </SidebarMenuButton>

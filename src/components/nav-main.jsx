@@ -11,20 +11,40 @@ import {
 } from "@/components/ui/field";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
-import { Sparkle } from "lucide-react";
+import { Loader2, Sparkle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useParams } from "next/navigation";
-import { generateReadme } from "@/actions/generateAction";
+import { generateReadme, getLatestReadme } from "@/actions/generateAction";
 
 export function NavMain({ currentProject }) {
-  const { activeSections, toggleSection } = useContext(WorkspaceContext);
+  const {
+    activeSections,
+    toggleSection,
+    isLoading,
+    setIsLoading,
+    setMarkdown,
+  } = useContext(WorkspaceContext);
 
   const params = useParams();
 
   const handleGenerate = async () => {
-    await generateReadme(params.projectId, activeSections);
+    setIsLoading(true);
+    setMarkdown("");
+    try {
+      const result = await generateReadme(params.projectId, activeSections);
+      if (result.success) {
+        const latestReadme = await getLatestReadme(params.projectId);
+        if (latestReadme?.success) {
+          setMarkdown(latestReadme?.data?.markdownContent);
+        }
+      }
+    } catch (error) {
+      console.error("Error on Generating Readme from UI:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <SidebarGroup>
@@ -46,7 +66,7 @@ export function NavMain({ currentProject }) {
         <FieldDescription>
           Choose the sections you want to include.
         </FieldDescription>
-        <FieldGroup className="gap-3 mt-0 max-h-[200px] bg-[#171717] rounded-xl p-2 overflow-y-auto  scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
+        <FieldGroup className="gap-3 mt-0 max-h-[200px]  bg-accent  rounded-xl p-2 overflow-y-auto  scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
           <Field orientation="horizontal">
             <Checkbox
               id="project-overview-checkbox"
@@ -158,8 +178,14 @@ export function NavMain({ currentProject }) {
       <Button
         className="w-full mt-4 bg-primary font-medium py-2 rounded-lg text-xs"
         onClick={handleGenerate}
+        disabled={isLoading}
       >
-        <Sparkle /> Generate README
+        {isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Sparkle />
+        )}
+        Generate README
       </Button>
     </SidebarGroup>
   );
