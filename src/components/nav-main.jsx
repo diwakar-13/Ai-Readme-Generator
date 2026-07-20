@@ -15,9 +15,17 @@ import { useContext } from "react";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
 import { Sparkle } from "lucide-react";
 import { Button } from "./ui/button";
+import { useParams } from "next/navigation";
+import { generateReadme } from "@/actions/generateAction";
 
 export function NavMain({ currentProject }) {
   const { activeSections, toggleSection } = useContext(WorkspaceContext);
+
+  const params = useParams();
+
+  const handleGenerate = async () => {
+    await generateReadme(params.projectId, activeSections);
+  };
   return (
     <SidebarGroup>
       <Field>
@@ -149,7 +157,7 @@ export function NavMain({ currentProject }) {
       </FieldSet>
       <Button
         className="w-full mt-4 bg-primary font-medium py-2 rounded-lg text-xs"
-        onClick={() => alert("AI generation starting for selected sections!")}
+        onClick={handleGenerate}
       >
         <Sparkle /> Generate README
       </Button>
