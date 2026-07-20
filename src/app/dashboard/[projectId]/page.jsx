@@ -1,5 +1,7 @@
 import { getProjectDetail, getUserAllProjects } from "@/actions/projectAction";
 import { AppSidebar } from "@/components/app-sidebar";
+import ReadmeWorkspace from "@/components/ReadmeWorkspace";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,13 +32,13 @@ export default async function Page({ params }) {
         <AppSidebar projects={projects} currentProject={currentProjectDetail} />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2">
-            <div className="flex items-center gap-2 px-4">
+            <div className="flex w-full items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
                 orientation="vertical"
                 className="mr-2 data-vertical:h-4 data-vertical:self-auto"
               />
-              <Breadcrumb>
+              <Breadcrumb className="flex justify-between lg:mr-7 mr-2 items-center w-full">
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink href="#">
@@ -48,16 +50,12 @@ export default async function Page({ params }) {
                     <BreadcrumbPage>Data Fetching</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
+                <AnimatedThemeToggler />
               </Breadcrumb>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-            </div>
-            <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+            <ReadmeWorkspace />
           </div>
         </SidebarInset>
       </SidebarProvider>

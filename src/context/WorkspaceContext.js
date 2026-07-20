@@ -5,7 +5,6 @@ import React, { createContext, useState, useEffect } from "react";
 export const WorkspaceContext = createContext();
 
 export function WorkspaceProvider({ children }) {
-  // 1. Initial State ko simple rakha taaki pehle page bina crash hue render ho
   const [activeSections, setActiveSections] = useState({
     projectOverview: true,
     features: true,
@@ -18,7 +17,9 @@ export function WorkspaceProvider({ children }) {
     license: false,
   });
 
-  // 2. Component mount hote hi localStorage se saved state uthao
+  const [isLoading, setIsLoading] = useState(false);
+  const [markdown, setMarkdown] = useState("");
+
   useEffect(() => {
     const savedSections = localStorage.getItem("reposcribe_sections");
     if (savedSections) {
@@ -30,7 +31,6 @@ export function WorkspaceProvider({ children }) {
     }
   }, []);
 
-  // 3. Jab bhi activeSections badle, use localStorage mein dump kar do
   const toggleSection = (sectionKey) => {
     setActiveSections((prev) => {
       const updated = {
@@ -43,7 +43,16 @@ export function WorkspaceProvider({ children }) {
   };
 
   return (
-    <WorkspaceContext.Provider value={{ activeSections, toggleSection }}>
+    <WorkspaceContext.Provider
+      value={{
+        activeSections,
+        toggleSection,
+        isLoading,
+        setIsLoading,
+        markdown,
+        setMarkdown,
+      }}
+    >
       {children}
     </WorkspaceContext.Provider>
   );
