@@ -149,6 +149,9 @@ export async function getProjectDetail(projectId) {
       error: "Unauthorized access! Please sign in first.",
     };
   }
+
+
+
   try {
     const result = await db
       .select()
@@ -156,7 +159,7 @@ export async function getProjectDetail(projectId) {
       .where(and(eq(projects.id, projectId), eq(projects.userId, userId)));
 
     if (!result || result.length === 0) {
-      return { success: false, error: "Project not found" };
+      return { success: false, notFound: true, error: "Project not found" };
     }
 
     return { success: true, project: result[0] };
@@ -264,4 +267,3 @@ export async function getFileContent(owner, repo, path) {
     return { success: false, error: `Failed to read ${path}` };
   }
 }
-

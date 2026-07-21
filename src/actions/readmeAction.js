@@ -3,8 +3,8 @@ import { buildReadmePrompt, README_SYSTEM_INSTRUCTION } from "@/lib/prompt";
 import { fetchGithubRepoData, getProjectDetail } from "./projectAction";
 import { openrouter } from "@/lib/openRouter";
 import { db } from "@/db";
-import { readmeVersions } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { projects, readmeVersions } from "@/db/schema";
+import { and, desc, eq } from "drizzle-orm";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Octokit } from "octokit";
 
@@ -74,16 +74,47 @@ export async function generateReadme(projectId, selectedSections) {
 
 export async function getLatestReadme(projectId) {
   try {
+    const { userId } = await auth();
+
+    // 1. Unauthenticated User Check
+    if (!userId) {
+      return {
+        success: false,
+        isUnauthorized: true,
+        error: "User not authenticated.",
+      };
+    }
+
+    // 2. Ownership Verification (IDOR Fix Gate)
+    const userProject = await db
+      .select()
+      .from(projects)
+      .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+      .limit(1);
+
+    // 3. Access Denied (Agar URL kisi aur ka hai)
+    if (!userProject || userProject.length === 0) {
+      return {
+        success: false,
+        isUnauthorized: true,
+        error: "Access Denied: You do not own this project.",
+      };
+    }
+
+    // 4. Fetch Latest README
     const result = await db
       .select()
       .from(readmeVersions)
       .where(eq(readmeVersions.projectId, projectId))
       .orderBy(desc(readmeVersions.createdAt))
       .limit(1);
+
+    // ✅ README Mila
     if (result && result.length > 0) {
       return { success: true, data: result[0] };
     }
-    return { success: false, data: null };
+
+    return { success: true, data: null };
   } catch (error) {
     console.error("Error fetching latest README from DB:", error);
     return { success: false, error: error.message };

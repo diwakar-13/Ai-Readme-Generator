@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
 import {
   Sparkles,
@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 export default function ReadmeWorkspace() {
+  const router = useRouter();
   const { user, isLoaded } = useUser();
   const { openUserProfile } = useClerk();
   const { isLoading, setIsLoading, markdown, setMarkdown } =
@@ -47,6 +48,10 @@ export default function ReadmeWorkspace() {
         const res = await getLatestReadme(params.projectId);
         if (res?.success && res?.data?.markdownContent) {
           setMarkdown(res.data.markdownContent);
+        } else if (res?.isUnauthorized) {
+          toast.error("Unauthorized! You do not own this project.");
+          setMarkdown("");
+          router.push("/");
         } else {
           setMarkdown("");
         }

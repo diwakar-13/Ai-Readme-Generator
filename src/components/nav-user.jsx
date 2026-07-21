@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { SignOutButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, useClerk, useUser } from "@clerk/nextjs";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -28,10 +24,13 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
   const { user, isLoaded } = useUser();
+  const { openUserProfile } = useClerk();
   const { isMobile } = useSidebar();
+  const router = useRouter();
 
   if (!isLoaded || !user) return null;
 
@@ -41,17 +40,11 @@ export function NavUser() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton
-                size="lg"
-                className="aria-expanded:bg-muted"
-              />
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
             }
           >
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage
-                src={user.imageUrl}
-                alt={user.fullName ?? "User"}
-              />
+              <AvatarImage src={user.imageUrl} alt={user.fullName ?? "User"} />
               <AvatarFallback>
                 {user.firstName?.[0]}
                 {user.lastName?.[0]}
@@ -59,9 +52,7 @@ export function NavUser() {
             </Avatar>
 
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">
-                {user.fullName}
-              </span>
+              <span className="truncate font-medium">{user.fullName}</span>
               <span className="truncate text-xs text-muted-foreground">
                 {user.primaryEmailAddress?.emailAddress}
               </span>
@@ -89,9 +80,7 @@ export function NavUser() {
               </Avatar>
 
               <div className="grid flex-1">
-                <span className="truncate font-medium">
-                  {user.fullName}
-                </span>
+                <span className="truncate font-medium">{user.fullName}</span>
                 <span className="truncate text-xs text-muted-foreground">
                   {user.primaryEmailAddress?.emailAddress}
                 </span>
@@ -101,24 +90,20 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/pricing")}
+                className="cursor-pointer text-amber-500 font-medium focus:text-amber-600"
+              >
                 <SparklesIcon className="mr-2 h-4 w-4" />
                 Upgrade to Pro
               </DropdownMenuItem>
 
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => openUserProfile()}
+                className="cursor-pointer"
+              >
                 <BadgeCheckIcon className="mr-2 h-4 w-4" />
                 Account
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <CreditCardIcon className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <BellIcon className="mr-2 h-4 w-4" />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
 

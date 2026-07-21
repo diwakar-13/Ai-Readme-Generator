@@ -27,11 +27,11 @@ import {
 
 const data = {
   navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: <LifeBuoyIcon />,
-    },
+    // {
+    //   title: "Support",
+    //   url: "#",
+    //   icon: <LifeBuoyIcon />,
+    // },
     {
       title: "Feedback",
       url: "#",

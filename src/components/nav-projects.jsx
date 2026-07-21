@@ -54,15 +54,15 @@ export function NavProjects({ projects }) {
                 render={
                   <SidebarMenuAction
                     showOnHover
-                    className="aria-expanded:bg-muted"
+                    className="aria-expand:bg-black"
                   />
                 }
               >
-                <MoreHorizontalIcon />
+                <MoreHorizontalIcon className="text-white hover:text-black dark:hover:text-white" />
                 <span className="sr-only">Options</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-40 bg-zinc-950 border-zinc-800 text-zinc-200"
+                className="w-40 bg-secondary border-zinc-800 text-zinc-200"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
