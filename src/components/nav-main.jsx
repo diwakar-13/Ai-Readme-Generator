@@ -49,16 +49,11 @@ export function NavMain({ currentProject }) {
   return (
     <SidebarGroup>
       <Field>
-        <FieldLabel htmlFor="input-demo-api-key">Repo Name-</FieldLabel>
-        <Input
-          id="input-demo-api-key"
-          type="text"
-          placeholder="e.g. Awesome Project"
-          defaultValue={currentProject?.repoName || ""}
-        />
-        <FieldDescription className="text-xs ">
-          Edit the repository name if needed.
-        </FieldDescription>
+        <FieldLabel htmlFor="input-demo-api-key ">
+          Repo Name- 
+        </FieldLabel>
+       <h2 className="text-sm p-2 border rounded-lg bg-accent cursor-not-allowed">{currentProject?.repoName || ""}</h2>
+  
       </Field>
 
       <FieldSet className="mt-5">

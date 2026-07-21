@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
+import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {
   const { projectId } = await params;
@@ -25,6 +26,7 @@ export default async function Page({ params }) {
   const currentProjectDetail = currentProject?.project;
   const result = await getUserAllProjects();
   const projects = result?.projects;
+ 
 
   return (
     <WorkspaceProvider>
