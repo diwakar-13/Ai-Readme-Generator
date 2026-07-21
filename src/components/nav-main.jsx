@@ -16,7 +16,7 @@ import { WorkspaceContext } from "@/context/WorkspaceContext";
 import { Loader2, Sparkle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useParams } from "next/navigation";
-import { generateReadme, getLatestReadme } from "@/actions/generateAction";
+import { generateReadme, getLatestReadme } from "@/actions/readmeAction";
 
 export function NavMain({ currentProject }) {
   const {
