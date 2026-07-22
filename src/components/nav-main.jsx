@@ -31,6 +31,8 @@ export function NavMain({ currentProject }) {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
+
+ 
   const handleGenerate = async () => {
     setIsLoading(true);
     setMarkdown("");

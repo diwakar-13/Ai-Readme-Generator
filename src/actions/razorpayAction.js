@@ -1,8 +1,10 @@
 "use server";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { refundRequests, users } from "@/db/schema";
+import { getRefundEmailHTML } from "@/email/refundEmailTemplate";
 import { razorpay } from "@/lib/razorpay";
+import { resend } from "@/lib/resend";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
@@ -124,5 +126,85 @@ export async function cancelSubscription() {
   } catch (error) {
     console.error("Cancellation Error:", error);
     return { success: false, error: "Failed to cancel subscription." };
+  }
+}
+
+export async function requestRefundAndRevoke(reason) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
+    // 1. fetch user
+    const dbUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!dbUser || dbUser.length === 0) {
+      return { success: false, error: "User record not found." };
+    }
+
+    const userData = dbUser[0];
+
+    if (userData?.plan !== "PRO") {
+      return {
+        success: false,
+        error: "You don't have an active Pro plan to refund.",
+      };
+    }
+    // set data in db
+    await db.insert(refundRequests).values({
+      userId: userId,
+      userEmail: userData.email,
+      reason: reason,
+      status: "PENDING",
+    });
+
+    // Database Update: Revoke Pro Access Instantly
+    await db
+      .update(users)
+      .set({
+        plan: "FREE",
+        credits: 0,
+        billingInterval: "REFUND_REQUESTED",
+      })
+      .where(eq(users.id, userId));
+    try {
+      const emailHtml = getRefundEmailHTML({
+        userEmail: userData.email,
+        userId: userId,
+        reason: reason,
+        requestDate: new Date(),
+      });
+      console.log("-----------------------------------------");
+      console.log("🚀 Attempting to send email via Resend...");
+      console.log("Target Email (ADMIN_EMAIL):", process.env.ADMIN_EMAIL);
+      const emailResponse = await resend.emails.send({
+        from: "RepoScribe <onboarding@resend.dev>",
+        to: [process.env.ADMIN_EMAIL],
+        subject: `🚨 Refund Requested by ${userData.email}`,
+        html: emailHtml,
+      });
+      console.log(
+        "📩 Resend Full Response:",
+        JSON.stringify(emailResponse, null, 2),
+      );
+      console.log("-----------------------------------------");
+      if (emailResponse.error) {
+        console.error("❌ Resend Error:", emailResponse.error);
+      } else {
+        console.log("✅ Custom Refund Email Sent! ID:", emailResponse.data?.id);
+      }
+    } catch (emailErr) {
+      console.error("❌ Email Exception:", emailErr);
+    }
+    return {
+      success: true,
+      message:
+        "Refund request submitted! Pro access has been revoked. Refund will be processed in 5-7 working days.",
+    };
+  } catch (error) {
+    console.error("Refund Process Error:", error);
+    return { success: false, error: "Failed to submit refund request." };
   }
 }

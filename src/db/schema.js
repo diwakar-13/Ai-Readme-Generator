@@ -37,3 +37,14 @@ export const readmeVersions = pgTable("readme_versions", {
   markdownContent: text("markdown_content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const refundRequests = pgTable("refund_requests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id").notNull(),
+  userEmail: text("user_email").notNull(),
+  reason: text("reason").notNull(),
+  status: text("status").default("PENDING"), // "PENDING", "APPROVED", "REJECTED"
+  createdAt: timestamp("created_at").defaultNow(),
+});
