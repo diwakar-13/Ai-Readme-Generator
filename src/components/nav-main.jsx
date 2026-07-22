@@ -9,14 +9,15 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { useContext, useState } from "react";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
 import { Loader2, Sparkle } from "lucide-react";
 import { Button } from "./ui/button";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { generateReadme, getLatestReadme } from "@/actions/readmeAction";
+import { checkAndDeductCredit } from "@/actions/creditAction";
+import { toast } from "sonner";
 
 export function NavMain({ currentProject }) {
   const {
@@ -28,20 +29,46 @@ export function NavMain({ currentProject }) {
   } = useContext(WorkspaceContext);
 
   const params = useParams();
-
+  const router = useRouter();
+  const pathname = usePathname();
   const handleGenerate = async () => {
     setIsLoading(true);
     setMarkdown("");
     try {
+      const creditRes = await checkAndDeductCredit();
+
+      if (!creditRes.allowed) {
+        toast.error(creditRes.error, {
+          action: {
+            label: "Upgrade to Pro",
+            onClick: () =>
+              router.push(`/pricing?redirect=${encodeURIComponent(pathname)}`),
+          },
+        });
+        setIsLoading(false);
+        return; // Guard failed -> stop execution
+      }
+
+      // Credit Available -> Proceed to Generate README
+      setMarkdown("");
       const result = await generateReadme(params.projectId, activeSections);
       if (result.success) {
         const latestReadme = await getLatestReadme(params.projectId);
         if (latestReadme?.success) {
           setMarkdown(latestReadme?.data?.markdownContent);
+
+          if (creditRes.creditsLeft !== 9999) {
+            toast.success(
+              `README Generated! ${creditRes.creditsLeft} free credits remaining.`,
+            );
+          } else {
+            toast.success("README Generated successfully!");
+          }
         }
       }
     } catch (error) {
       console.error("Error on Generating Readme from UI:", error);
+      toast.error("Failed to generate README. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -49,11 +76,10 @@ export function NavMain({ currentProject }) {
   return (
     <SidebarGroup>
       <Field>
-        <FieldLabel htmlFor="input-demo-api-key ">
-          Repo Name- 
-        </FieldLabel>
-       <h2 className="text-sm p-2 border rounded-lg bg-accent cursor-not-allowed">{currentProject?.repoName || ""}</h2>
-  
+        <FieldLabel htmlFor="input-demo-api-key ">Repo Name-</FieldLabel>
+        <h2 className="text-sm p-2 border rounded-lg bg-accent cursor-not-allowed">
+          {currentProject?.repoName || ""}
+        </h2>
       </Field>
 
       <FieldSet className="mt-5">
