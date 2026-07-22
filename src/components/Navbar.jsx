@@ -6,16 +6,20 @@ import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation"; // 👈 1. Hook Imported
 
 const Navbar = () => {
   const { user, isLoaded } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname(); // 👈 2. Current path read kiya
+
+  // 🎯 Dynamic redirect URL helper
+  const pricingHref = `/pricing?redirect=${encodeURIComponent(pathname)}`;
 
   return (
     <header className="relative z-50 w-full">
       {/* Navbar Container */}
       <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        
         {/* Logo */}
         <Link
           href="/"
@@ -30,15 +34,15 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-8 lg:flex">
           <Link
-            href="/pricing"
-            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all "
+            href={pricingHref}
+            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all"
           >
             Pricing
           </Link>
 
           <Link
             href="/contact-us"
-            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all "
+            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all"
           >
             Contact us
           </Link>
@@ -58,12 +62,6 @@ const Navbar = () => {
 
           {isLoaded && user && (
             <>
-              <Link href="/dashboard">
-                <Button className="cursor-pointer rounded-full px-6 font-game">
-                  Dashboard
-                </Button>
-              </Link>
-
               <UserButton />
             </>
           )}
@@ -94,9 +92,8 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="absolute left-4 right-4 top-20 z-40 lg:hidden">
           <div className="mx-auto flex max-w-2xl flex-col gap-2 rounded-2xl border bg-background/90 p-4 shadow-xl backdrop-blur-xl">
-            
             <Link
-              href="/pricing"
+              href={pricingHref}
               onClick={() => setIsMenuOpen(false)}
               className="rounded-xl px-4 py-3 text-base font-medium transition-colors hover:bg-accent"
             >
@@ -114,23 +111,9 @@ const Navbar = () => {
             <div className="my-1 h-px bg-border" />
 
             {isLoaded && !user && (
-              <Link
-                href="/sign-up"
-                onClick={() => setIsMenuOpen(false)}
-              >
+              <Link href="/sign-up" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full cursor-pointer rounded-xl">
                   Sign up
-                </Button>
-              </Link>
-            )}
-
-            {isLoaded && user && (
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Button className="w-full cursor-pointer rounded-xl font-game">
-                  Dashboard
                 </Button>
               </Link>
             )}

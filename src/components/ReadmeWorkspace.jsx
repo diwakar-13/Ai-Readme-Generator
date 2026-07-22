@@ -13,6 +13,7 @@ import {
   Edit3,
   Save,
   GitCommit,
+  Lock,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -24,6 +25,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useUser, useClerk } from "@clerk/nextjs";
+import { getUserSubscription } from "@/actions/userAction";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import UpgradeModal from "./UpgradeModel";
 
 export default function ReadmeWorkspace() {
   const router = useRouter();
@@ -38,6 +49,19 @@ export default function ReadmeWorkspace() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isCommitting, setIsCommitting] = useState(false);
   const [commitSuccess, setCommitSuccess] = useState(false);
+  const [userPlan, setUserPlan] = useState("FREE");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      const res = await getUserSubscription();
+
+      if (res?.success && res?.plan) {
+        setUserPlan(res?.plan.toUpperCase());
+      }
+    };
+    fetchUserPlan();
+  }, []);
 
   useEffect(() => {
     const loadFromDB = async () => {
@@ -65,6 +89,14 @@ export default function ReadmeWorkspace() {
 
     loadFromDB();
   }, [params?.projectId]);
+
+  const handleTabSwitch = (targertTab) => {
+    if (targertTab === "edit" && userPlan === "FREE") {
+      setShowUpgradeModal(true);
+      return;
+    }
+    setActiveTab(targertTab);
+  };
 
   const handleCopy = () => {
     if (!markdown) return;
@@ -103,6 +135,10 @@ export default function ReadmeWorkspace() {
   };
 
   const handleCommit = async () => {
+    if (userPlan === "FREE") {
+      setShowUpgradeModal(true);
+      return;
+    }
     if (!params?.projectId || !markdown) {
       toast.error("Please write or generate a README first.");
       return;
@@ -260,6 +296,9 @@ export default function ReadmeWorkspace() {
               <>
                 <GitCommit className="h-3.5 w-3.5" />
                 {isCommitting ? "Committing..." : "Commit to GitHub"}
+                {userPlan === "FREE" && (
+                  <Lock className="h-3 w-3 ml-0.5 opacity-80" />
+                )}
               </>
             )}
           </Button>
@@ -278,7 +317,7 @@ export default function ReadmeWorkspace() {
               Preview
             </button>
             <button
-              onClick={() => setActiveTab("edit")}
+              onClick={() => handleTabSwitch("edit")}
               className={`flex flex-1 sm:flex-none items-center justify-center gap-1.5 px-3 py-1 text-xs rounded-md transition-all ${
                 activeTab === "edit"
                   ? "bg-card text-card-foreground font-medium shadow-sm"
@@ -287,6 +326,9 @@ export default function ReadmeWorkspace() {
             >
               <Edit3 className="h-3.5 w-3.5" />
               Edit
+              {userPlan === "FREE" && (
+                <Lock className="h-3 w-3 text-primary ml-0.5" />
+              )}
             </button>
           </div>
 
@@ -478,6 +520,12 @@ export default function ReadmeWorkspace() {
           />
         </div>
       )}
+
+      {/*  UPGRADE TO PRO DIALOG component */}
+      <UpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+      />
     </div>
   );
 }

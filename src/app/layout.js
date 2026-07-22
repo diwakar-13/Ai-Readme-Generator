@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
           >
             {children}
             <Toaster position="top-right" richColors />
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
           </ThemeProvider>
         </ClerkProvider>
       </body>

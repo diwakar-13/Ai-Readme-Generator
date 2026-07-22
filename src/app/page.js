@@ -5,6 +5,7 @@ import RepoTextarea from "@/components/RepoTextarea";
 import { useState } from "react";
 import { handleRepoSubmisson } from "@/actions/projectAction";
 import { useRouter } from "next/navigation";
+import { GradientDots } from "@/components/gradient-dots";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function Home() {
       if (!result.success) {
         setErrorMessage(result?.error);
       } else {
-       router.push(`/dashboard/${result.projectId}`);
+        router.push(`/dashboard/${result.projectId}`);
       }
     } catch (error) {
       console.error("UI Submission Pipeline Error:", error);
@@ -31,13 +32,8 @@ export default function Home() {
   };
 
   return (
-    <div className="relative w-full h-screen">
-      <BackgroundUi
-        color="rgba(139, 92, 246, 1)"
-        animation={{ scale: 100, speed: 90 }}
-        noise={{ opacity: 1, scale: 1.2 }}
-        sizing="fill"
-      />
+    <div className="relative dark:bg-white w-full h-screen">
+      <GradientDots />
       <div className="absolute top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
