@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { octokit } from "@/lib/octokit";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 export async function handleRepoSubmisson(repoUrl) {
   const { userId } = await auth();
@@ -150,8 +150,6 @@ export async function getProjectDetail(projectId) {
     };
   }
 
-
-
   try {
     const result = await db
       .select()
@@ -172,7 +170,7 @@ export async function getProjectDetail(projectId) {
   }
 }
 
-// get all projects of a user
+
 export async function getUserAllProjects() {
   try {
     const { userId } = await auth();
@@ -187,10 +185,18 @@ export async function getUserAllProjects() {
     const result = await db
       .select()
       .from(projects)
-      .where(eq(projects.userId, userId));
+      .where(eq(projects.userId, userId))
+      .orderBy(desc(projects.createdAt));
 
     return { success: true, projects: result };
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching user projects:", error);
+    return {
+      success: false,
+      error: "Failed to fetch projects. Please try again.",
+      projects: [],
+    };
+  }
 }
 export async function fetchGithubRepoData(repoUrl) {
   try {

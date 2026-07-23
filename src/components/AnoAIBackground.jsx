@@ -1,0 +1,206 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+
+export default function AnoAI() {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+    });
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // IMPORTANT
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.inset = "0";
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
+    renderer.domElement.style.pointerEvents = "none";
+
+    container.appendChild(renderer.domElement);
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: {
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        },
+      },
+
+      vertexShader: `
+        void main(){
+          gl_Position = vec4(position,1.0);
+        }
+      `,
+
+      fragmentShader: `
+        uniform float iTime;
+        uniform vec2 iResolution;
+
+        #define NUM_OCTAVES 3
+
+        float rand(vec2 n){
+          return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);
+        }
+
+        float noise(vec2 p){
+          vec2 ip=floor(p);
+          vec2 u=fract(p);
+
+          u=u*u*(3.0-2.0*u);
+
+          float res=mix(
+            mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),
+            mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),
+            u.y
+          );
+
+          return res*res;
+        }
+
+        float fbm(vec2 x){
+
+          float v=0.0;
+          float a=.3;
+
+          vec2 shift=vec2(100.0);
+
+          mat2 rot=mat2(
+            cos(.5),
+            sin(.5),
+            -sin(.5),
+            cos(.5)
+          );
+
+          for(int i=0;i<NUM_OCTAVES;i++){
+
+            v+=a*noise(x);
+
+            x=rot*x*2.0+shift;
+
+            a*=0.4;
+          }
+
+          return v;
+        }
+
+        void main(){
+
+          vec2 shake=vec2(
+            sin(iTime*1.2)*0.005,
+            cos(iTime*2.1)*0.005
+          );
+
+          vec2 p=((gl_FragCoord.xy+shake*iResolution.xy)-iResolution.xy*.5)
+          /iResolution.y
+          *mat2(6.,-4.,4.,6.);
+
+          vec2 v;
+
+          vec4 o=vec4(0.0);
+
+          float f=2.+fbm(p+vec2(iTime*5.,0.))*0.5;
+
+          for(float i=0.;i<35.;i++){
+
+            v=p+
+            cos(i*i+(iTime+p.x*.08)*.025+i*vec2(13.,11.))*3.5+
+            vec2(
+              sin(iTime*3.+i)*.003,
+              cos(iTime*3.5-i)*.003
+            );
+
+            float tailNoise=
+            fbm(v+vec2(iTime*.5,i))
+            *.3
+            *(1.-(i/35.));
+
+            vec4 aurora=vec4(
+              .1+.3*sin(i*.2+iTime*.4),
+              .3+.5*cos(i*.3+iTime*.5),
+              .7+.3*sin(i*.4+iTime*.3),
+              1.
+            );
+
+            vec4 c=
+            aurora*
+            exp(sin(i*i+iTime*.8))
+            /length(max(v,vec2(v.x*f*.015,v.y*1.5)));
+
+            float thin=
+            smoothstep(0.,1.,i/35.)*.6;
+
+            o+=c*(1.+tailNoise*.8)*thin;
+          }
+
+          o=tanh(pow(o/100.,vec4(1.6)));
+
+          gl_FragColor=o*1.5;
+        }
+      `,
+    });
+
+    const geometry = new THREE.PlaneGeometry(2, 2);
+
+    const mesh = new THREE.Mesh(geometry, material);
+
+    scene.add(mesh);
+
+    let frame;
+
+    function animate() {
+      material.uniforms.iTime.value += 0.016;
+
+      renderer.render(scene, camera);
+
+      frame = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    function resize() {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      material.uniforms.iResolution.value.set(
+        window.innerWidth,
+        window.innerHeight,
+      );
+    }
+
+    window.addEventListener("resize", resize);
+
+    return () => {
+      cancelAnimationFrame(frame);
+
+      window.removeEventListener("resize", resize);
+
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
+    />
+  );
+}
