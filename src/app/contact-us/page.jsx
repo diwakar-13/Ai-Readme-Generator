@@ -64,10 +64,17 @@ export default function ContactPage() {
           {/* Top Brand Logo */}
           <div className="relative z-10 flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background/30 dark:bg-white/10 border border-white/20 backdrop-blur-md">
-              <Terminal className="h-5 w-5 text-foreground dark:text-white" />
+              <Image
+                src="/logo.png"
+                alt="logo"
+                width={50}
+                height={50}
+                priority
+              />
             </div>
-            <span className="text-xl font-black tracking-tight text-foreground dark:text-white">
-              RepoScribe
+            <span className="text-xl font-black text-white">
+              Repo
+              <span className="text-orange-500">Scribe</span>
             </span>
           </div>
 

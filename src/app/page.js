@@ -107,7 +107,7 @@ export default function Home() {
 
         <h1 className="max-w-6xl text-center text-5xl font-extrabold tracking-tight text-foreground leading-[1.05] sm:text-6xl md:text-7xl">
           Generate Professional README Files
-          <span className="block bg-gradient-to-r from-orange-400 via-yellow-300 to-orange-500 bg-clip-text text-transparent">
+          <span className="block bg-gradient-to-r from-orange-300 via-orange-500 to-orange-900 bg-clip-text text-transparent">
             From Any GitHub Repository
           </span>
         </h1>
