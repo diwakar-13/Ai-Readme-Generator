@@ -7,6 +7,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation"; // 👈 1. Hook Imported
+import Image from "next/image";
 
 const Navbar = () => {
   const { user, isLoaded } = useUser();
@@ -26,8 +27,15 @@ const Navbar = () => {
           className="relative z-50 flex shrink-0 items-center"
           onClick={() => setIsMenuOpen(false)}
         >
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={50}
+            height={50}
+            priority
+          />
           <h2 className="font-game text-2xl font-bold tracking-wide sm:text-3xl">
-            RepoScribe
+            Repo<span className="text-orange-500">Scribe</span> 
           </h2>
         </Link>
 
