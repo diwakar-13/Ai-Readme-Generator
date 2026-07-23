@@ -1,0 +1,92 @@
+export function getFeedbackEmailHtml({ userName, userEmail, userId, rating, category, feedbackText }) {
+  const starsHtml = Array.from({ length: 5 }, (_, i) => 
+    i < rating 
+      ? `<span style="color: #f97316; font-size: 20px;">★</span>`
+      : `<span style="color: #3f3f46; font-size: 20px;">★</span>`
+  ).join(" ");
+
+  return `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New Product Feedback</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #09090b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #09090b; padding: 40px 20px;">
+        <tr>
+          <td align="center">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; background-color: #121215; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+              
+              <!-- Header Bar -->
+              <tr>
+                <td style="padding: 28px 32px; background: linear-gradient(135deg, #18181b 0%, #09090b 100%); border-bottom: 1px solid #27272a;">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td>
+                        <span style="font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Repo<span style="color: #f97316;">Scribe</span></span>
+                      </td>
+                      <td align="right">
+                        <span style="display: inline-block; background-color: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); color: #fb923c; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">Product Feedback</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Content Body -->
+              <tr>
+                <td style="padding: 32px;">
+                  
+                  <!-- Rating Display -->
+                  <div style="background-color: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #a1a1aa; margin-bottom: 8px;">User Rating Score</div>
+                    <div style="margin-bottom: 4px;">${starsHtml}</div>
+                    <div style="font-size: 22px; font-weight: 800; color: #ffffff;">${rating} <span style="font-size: 14px; color: #71717a; font-weight: 400;">/ 5.0</span></div>
+                  </div>
+
+                  <!-- Details Grid -->
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
+                    <tr>
+                      <td style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; color: #71717a;">Submitted By:</td>
+                      <td align="right" style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; font-weight: 600; color: #f4f4f5;">${userName}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; color: #71717a;">Email Address:</td>
+                      <td align="right" style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; font-weight: 600; color: #f97316;">${userEmail}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; color: #71717a;">Category:</td>
+                      <td align="right" style="padding: 10px 0; border-bottom: 1px solid #27272a; font-size: 13px; font-weight: 600; color: #e4e4e7;">${category}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 0; font-size: 13px; color: #71717a;">Clerk User ID:</td>
+                      <td align="right" style="padding: 10px 0; font-size: 12px; font-family: monospace; color: #a1a1aa;">${userId}</td>
+                    </tr>
+                  </table>
+
+                  <!-- Feedback Message Box -->
+                  <div style="margin-top: 8px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #a1a1aa; margin-bottom: 10px;">Feedback Content</div>
+                    <div style="background-color: #09090b; border: 1px solid #27272a; border-radius: 12px; padding: 20px; color: #e4e4e7; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${feedbackText}</div>
+                  </div>
+
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td align="center" style="padding: 20px 32px 28px; background-color: #09090b; border-top: 1px solid #18181b; color: #52525b; font-size: 12px;">
+                  Sent automatically from RepoScribe Dashboard Workspace.
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
+  `;
+}

@@ -72,7 +72,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden  dark:bg-black">
+    <div className="relative min-h-screen overflow-x-hidden  ">
       <AnoAI />
 
       <div className="absolute inset-x-0 top-0 z-50">
@@ -165,12 +165,12 @@ export default function Home() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-32 animate-pulse rounded-2xl border bg-card/80 border-border"
+                  className="h-32 animate-pulse rounded-2xl border bg-[#171717] border-border"
                 />
               ))}
             </div>
           ) : recentProjects.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-card/60 py-16 px-8 text-center backdrop-blur-md">
+            <div className="rounded-2xl border border-dashed border-border bg-[#171717] py-16 px-8 text-center backdrop-blur-md">
               <FolderGit2 className="mx-auto mb-4 h-8 w-8 text-neutral-500" />
 
               <h3 className="text-lg font-semibold text-foreground">
@@ -187,7 +187,7 @@ export default function Home() {
                 <Link
                   key={project.id}
                   href={`/dashboard/${project.id}`}
-                  className="group rounded-2xl border border-border bg-card/80 p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:border-primary/40"
+                  className="group rounded-2xl border border-border bg-accent p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:border-primary/40"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2 overflow-hidden">

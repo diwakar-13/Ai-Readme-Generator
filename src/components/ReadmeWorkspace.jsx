@@ -26,14 +26,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { getUserSubscription } from "@/actions/userAction";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import UpgradeModal from "./UpgradeModel";
 
 export default function ReadmeWorkspace() {
@@ -195,26 +187,26 @@ export default function ReadmeWorkspace() {
 
   if (isLoading) {
     return (
-      <div className="h-full w-full animate-pulse space-y-6 rounded-xl border border-border bg-secondary dark:bg-secondary-foreground p-4 sm:p-6 transition-colors">
+      <div className="h-full w-full animate-pulse space-y-6 rounded-xl border border-border bg-card p-4 sm:p-6 transition-colors">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-4">
-          <div className="h-6 w-32 rounded bg-muted-foreground dark:bg-muted" />
-          <div className="h-8 w-full sm:w-48 rounded dark:bg-muted bg-muted-foreground" />
+          <div className="h-6 w-32 rounded bg-muted" />
+          <div className="h-8 w-full sm:w-48 rounded bg-muted" />
         </div>
 
         <div className="space-y-3 pt-2">
-          <div className="h-5 w-40 rounded dark:bg-muted bg-muted-foreground" />
-          <div className="h-4 w-full rounded dark:bg-muted bg-muted-foreground" />
-          <div className="h-4 w-4/5 rounded dark:bg-muted bg-muted-foreground" />
+          <div className="h-5 w-40 rounded bg-muted" />
+          <div className="h-4 w-full rounded bg-muted" />
+          <div className="h-4 w-4/5 rounded bg-muted" />
         </div>
 
-        <div className="h-28 w-full rounded-lg border border-border dark:bg-muted bg-muted-foreground" />
+        <div className="h-28 w-full rounded-lg border border-border bg-muted" />
       </div>
     );
   }
 
   if (!markdown) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-secondary dark:bg-secondary-foreground p-6 sm:p-8 text-center transition-colors">
+      <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-6 sm:p-8 text-center transition-colors">
         <div className="mb-5 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-border bg-muted">
           <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 animate-pulse text-primary" />
         </div>
@@ -233,13 +225,13 @@ export default function ReadmeWorkspace() {
   }
 
   return (
-    <div className="w-full rounded-xl border border-border bg-secondary dark:bg-secondary-foreground p-4 sm:p-6 transition-colors">
+    <div className="w-full rounded-xl border border-border bg-card text-card-foreground p-4 sm:p-6 transition-colors shadow-sm">
       {/* HEADER SECTION - Responsive Container */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
         {/* Title / File Indicator */}
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary shrink-0" />
-          <span className="text-xs font-mono text-card-foreground">
+          <span className="text-xs font-mono font-bold text-orange-500">
             README.md
           </span>
         </div>
@@ -260,7 +252,7 @@ export default function ReadmeWorkspace() {
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5 text-card-foreground" />
+                <Copy className="h-3.5 w-3.5" />
                 <span className="inline">Copy</span>
               </>
             )}
@@ -271,9 +263,9 @@ export default function ReadmeWorkspace() {
             onClick={handleDownload}
             variant="outline"
             size="sm"
-            className="text-xs gap-1.5 h-8 text-card-foreground cursor-pointer active:scale-95 flex-1 sm:flex-none justify-center"
+            className="text-xs gap-1.5 h-8 cursor-pointer active:scale-95 flex-1 sm:flex-none justify-center"
           >
-            <Download className="h-3.5 w-3.5 text-zinc-400" />
+            <Download className="h-3.5 w-3.5" />
             <span className="inline">Download</span>
           </Button>
 
@@ -283,7 +275,7 @@ export default function ReadmeWorkspace() {
             disabled={isCommitting}
             variant="default"
             size="sm"
-            className={`h-8 gap-1.5 text-xs text-white cursor-pointer active:scale-95 w-full sm:w-auto justify-center ${
+            className={`h-8 gap-1.5 text-xs  cursor-pointer active:scale-95 w-full sm:w-auto justify-center ${
               commitSuccess ? "bg-emerald-600" : ""
             }`}
           >
@@ -304,13 +296,13 @@ export default function ReadmeWorkspace() {
           </Button>
 
           {/* Preview / Edit Toggle Tabs */}
-          <div className="flex items-center bg-secondary dark:bg-secondary-foreground border border-gray-500/50 rounded-lg p-1 w-full sm:w-auto justify-center mt-1 sm:mt-0">
+          <div className="flex items-center bg-muted border border-border rounded-lg p-1 w-full sm:w-auto justify-center mt-1 sm:mt-0">
             <button
               onClick={() => setActiveTab("preview")}
               className={`flex flex-1 sm:flex-none items-center justify-center gap-1.5 px-3 py-1 text-xs rounded-md transition-all ${
                 activeTab === "preview"
-                  ? "bg-card text-card-foreground font-medium shadow-sm"
-                  : "text-card-foreground hover:text-card-foreground/50"
+                  ? "bg-background text-foreground font-semibold shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Eye className="h-3.5 w-3.5" />
@@ -320,8 +312,8 @@ export default function ReadmeWorkspace() {
               onClick={() => handleTabSwitch("edit")}
               className={`flex flex-1 sm:flex-none items-center justify-center gap-1.5 px-3 py-1 text-xs rounded-md transition-all ${
                 activeTab === "edit"
-                  ? "bg-card text-card-foreground font-medium shadow-sm"
-                  : "text-card-foreground hover:text-card-foreground/50"
+                  ? "bg-background text-foreground font-semibold shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Edit3 className="h-3.5 w-3.5" />
@@ -332,7 +324,7 @@ export default function ReadmeWorkspace() {
             </button>
           </div>
 
-          {/* Save Changes Button (Visible only in Edit Tab) */}
+          {/* Save Changes Button */}
           {activeTab === "edit" && (
             <Button
               onClick={handleSaveEdit}
@@ -356,9 +348,9 @@ export default function ReadmeWorkspace() {
         </div>
       </div>
 
-      {/* Markdown Preview/Editor */}
+      {/* Markdown Preview/Editor - Explicit Foreground Text Colors */}
       {activeTab === "preview" ? (
-        <div className="space-y-4 text-sm leading-relaxed overflow-x-auto">
+        <div className="space-y-4 text-sm leading-relaxed overflow-x-auto text-foreground">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -370,13 +362,13 @@ export default function ReadmeWorkspace() {
               ),
               h2: ({ node, ...props }) => (
                 <h2
-                  className="text-lg sm:text-xl font-semibold text-foreground border-b border-border pb-2 mt-6 mb-3 capitalize"
+                  className="text-lg sm:text-xl font-bold text-foreground border-b border-border pb-2 mt-6 mb-3 capitalize"
                   {...props}
                 />
               ),
               h3: ({ node, ...props }) => (
                 <h3
-                  className="text-base sm:text-lg font-medium text-foreground mt-4 mb-2 capitalize"
+                  className="text-base sm:text-lg font-semibold text-foreground mt-4 mb-2 capitalize"
                   {...props}
                 />
               ),
@@ -390,7 +382,7 @@ export default function ReadmeWorkspace() {
               ),
               thead: ({ node, ...props }) => (
                 <thead
-                  className="bg-muted/80 border-b border-border text-xs uppercase font-semibold text-foreground"
+                  className="bg-muted border-b border-border text-xs uppercase font-semibold text-foreground"
                   {...props}
                 />
               ),
@@ -411,7 +403,7 @@ export default function ReadmeWorkspace() {
               ),
               td: ({ node, ...props }) => (
                 <td
-                  className="px-3 sm:px-4 py-2 sm:py-3 text-muted-foreground"
+                  className="px-3 sm:px-4 py-2 sm:py-3 text-foreground/80"
                   {...props}
                 />
               ),
@@ -430,7 +422,7 @@ export default function ReadmeWorkspace() {
 
                 return (
                   <p
-                    className="text-muted-foreground leading-relaxed mb-3 text-xs sm:text-sm"
+                    className="text-foreground/90 font-normal leading-relaxed mb-3 text-xs sm:text-sm"
                     {...props}
                   >
                     {children}
@@ -462,7 +454,7 @@ export default function ReadmeWorkspace() {
 
                 return (
                   <ul
-                    className="list-disc pl-5 space-y-1.5 text-muted-foreground my-2 text-xs sm:text-sm"
+                    className="list-disc pl-5 space-y-1.5 text-foreground/90 my-2 text-xs sm:text-sm"
                     {...props}
                   >
                     {children}
@@ -481,7 +473,7 @@ export default function ReadmeWorkspace() {
                 }
 
                 return (
-                  <li className="pl-1" {...props}>
+                  <li className="pl-1 text-foreground/90" {...props}>
                     {children}
                   </li>
                 );
@@ -490,7 +482,7 @@ export default function ReadmeWorkspace() {
                 if (inline) {
                   return (
                     <code
-                      className="bg-muted border border-border text-foreground px-1.5 py-0.5 rounded text-xs font-mono break-all"
+                      className="bg-muted border border-border text-foreground px-1.5 py-0.5 rounded text-xs font-mono font-medium break-all"
                       {...props}
                     >
                       {children}
@@ -499,7 +491,7 @@ export default function ReadmeWorkspace() {
                 }
                 return (
                   <div className="relative my-4 rounded-lg border border-border bg-muted/80 p-3 sm:p-4 overflow-x-auto">
-                    <pre className="font-mono text-xs text-foreground leading-relaxed">
+                    <pre className="font-mono text-xs text-foreground leading-relaxed font-normal">
                       <code>{children}</code>
                     </pre>
                   </div>
@@ -521,7 +513,7 @@ export default function ReadmeWorkspace() {
         </div>
       )}
 
-      {/*  UPGRADE TO PRO DIALOG component */}
+      {/* UPGRADE TO PRO DIALOG component */}
       <UpgradeModal
         open={showUpgradeModal}
         onOpenChange={setShowUpgradeModal}

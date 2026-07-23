@@ -39,7 +39,7 @@ export function NavProjects({ projects }) {
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
 
 
-      <SidebarMenu className="bg-accent rounded-xl p-2 max-h-[260px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
+      <SidebarMenu className=" bg-muted/40 dark:bg-zinc-900/80 border-border border rounded-xl p-2 max-h-[260px]  overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
         {projects.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton

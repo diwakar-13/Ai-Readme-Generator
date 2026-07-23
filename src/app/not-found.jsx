@@ -17,8 +17,9 @@ export default function NotFound() {
 
       {/* Message */}
       <p className="mb-8 max-w-md text-sm text-muted-foreground sm:text-base">
-        Opps! Jis page ko aap dhoondhne ki koshish kar rahe hain wo exist nahi
-        karta ya URL galat hai.
+        The page you're looking for doesn't exist, may have been moved, or the
+        URL is incorrect. Return to the homepage to continue generating
+        AI-powered GitHub documentation.
       </p>
 
       {/* Back to Home Button */}
