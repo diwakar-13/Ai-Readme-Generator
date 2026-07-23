@@ -26,7 +26,6 @@ export default async function Page({ params }) {
   const currentProjectDetail = currentProject?.project;
   const result = await getUserAllProjects();
   const projects = result?.projects;
- 
 
   return (
     <WorkspaceProvider>
@@ -43,13 +42,11 @@ export default async function Page({ params }) {
               <Breadcrumb className="flex justify-between lg:mr-7 mr-2 items-center w-full">
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Build Your Application
-                    </BreadcrumbLink>
+                    <BreadcrumbLink href="#">Workspace</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                    <BreadcrumbPage>Repository Intelligence</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
                 <AnimatedThemeToggler />
