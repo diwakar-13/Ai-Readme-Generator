@@ -10,7 +10,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Checkbox } from "./ui/checkbox";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { WorkspaceContext } from "@/context/WorkspaceContext";
 import { Loader2, Sparkle } from "lucide-react";
 import { Button } from "./ui/button";
@@ -32,7 +32,6 @@ export function NavMain({ currentProject }) {
   const router = useRouter();
   const pathname = usePathname();
 
- 
   const handleGenerate = async () => {
     setIsLoading(true);
     setMarkdown("");
@@ -48,10 +47,9 @@ export function NavMain({ currentProject }) {
           },
         });
         setIsLoading(false);
-        return; // Guard failed -> stop execution
+        return;
       }
 
-      // Credit Available -> Proceed to Generate README
       setMarkdown("");
       const result = await generateReadme(params.projectId, activeSections);
       if (result.success) {
@@ -75,22 +73,29 @@ export function NavMain({ currentProject }) {
       setIsLoading(false);
     }
   };
+
   return (
     <SidebarGroup>
       <Field>
-        <FieldLabel htmlFor="input-demo-api-key ">Repo Name-</FieldLabel>
-        <h2 className="text-sm p-2 border rounded-lg bg-accent cursor-not-allowed">
-          {currentProject?.repoName || ""}
+        <FieldLabel htmlFor="input-demo-api-key" className="font-semibold text-xs text-foreground">
+          Repo Name-
+        </FieldLabel>
+        <h2 className="text-sm font-semibold p-2.5 border border-border rounded-lg bg-muted/60 text-foreground cursor-not-allowed mt-1 truncate">
+          {currentProject?.repoName || "Select a project"}
         </h2>
       </Field>
 
       <FieldSet className="mt-5">
-        <FieldLegend variant="label">Readme Sections-</FieldLegend>
-        <FieldDescription>
+        <FieldLegend variant="label" className="font-semibold text-xs text-foreground">
+          Readme Sections-
+        </FieldLegend>
+        <FieldDescription className="text-[11px] text-muted-foreground mb-2">
           Choose the sections you want to include.
         </FieldDescription>
-        <FieldGroup className="gap-3 mt-0 max-h-[200px]  bg-accent  rounded-xl p-2 overflow-y-auto  scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-sidebar-scroll">
-          <Field orientation="horizontal">
+
+        <FieldGroup className="gap-2.5 max-h-[220px] bg-muted/40 dark:bg-zinc-900/80 border border-border rounded-xl p-3 overflow-y-auto custom-sidebar-scroll">
+          
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="project-overview-checkbox"
               name="project-overview-checkbox"
@@ -99,114 +104,120 @@ export function NavMain({ currentProject }) {
             />
             <FieldLabel
               htmlFor="project-overview-checkbox"
-              className="font-normal"
+              className="font-medium text-xs text-foreground cursor-pointer"
             >
               Project Overview
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="features-checkbox"
               name="features-checkbox"
               checked={activeSections.features}
               onCheckedChange={() => toggleSection("features")}
             />
-            <FieldLabel htmlFor="features-checkbox" className="font-normal">
+            <FieldLabel htmlFor="features-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               Features
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="installation-checkbox"
               name="installation-checkbox"
               checked={activeSections.installation}
               onCheckedChange={() => toggleSection("installation")}
             />
-            <FieldLabel htmlFor="installation-checkbox" className="font-normal">
+            <FieldLabel htmlFor="installation-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               Installation
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="usage-checkbox"
               name="usage-checkbox"
               checked={activeSections.usage}
               onCheckedChange={() => toggleSection("usage")}
             />
-            <FieldLabel htmlFor="usage-checkbox" className="font-normal">
+            <FieldLabel htmlFor="usage-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               Usage
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="tech-stack-checkbox"
               name="tech-stack-checkbox"
               checked={activeSections.techStack}
               onCheckedChange={() => toggleSection("techStack")}
             />
-            <FieldLabel htmlFor="tech-stack-checkbox" className="font-normal">
+            <FieldLabel htmlFor="tech-stack-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               Tech Stack
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="project-structure"
               name="project-structure"
               checked={activeSections.projectStructure}
               onCheckedChange={() => toggleSection("projectStructure")}
             />
-            <FieldLabel htmlFor="project-structure" className="font-normal">
+            <FieldLabel htmlFor="project-structure" className="font-medium text-xs text-foreground cursor-pointer">
               Project Structure
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="api-reference-checkbox"
               name="api-reference-checkbox"
               checked={activeSections.apiReference}
               onCheckedChange={() => toggleSection("apiReference")}
             />
-            <FieldLabel
-              htmlFor="api-reference-checkbox"
-              className="font-normal"
-            >
+            <FieldLabel htmlFor="api-reference-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               API Reference
             </FieldLabel>
           </Field>
-          <Field orientation="horizontal">
+
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="contributing-checkbox"
               name="contributing-checkbox"
               checked={activeSections.contributing}
               onCheckedChange={() => toggleSection("contributing")}
             />
-            <FieldLabel htmlFor="contributing-checkbox" className="font-normal">
+            <FieldLabel htmlFor="contributing-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               Contributing
             </FieldLabel>
           </Field>
 
-          <Field orientation="horizontal">
+          <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="license-checkbox"
               name="license-checkbox"
               checked={activeSections.license}
               onCheckedChange={() => toggleSection("license")}
             />
-            <FieldLabel htmlFor="license-checkbox" className="font-normal">
+            <FieldLabel htmlFor="license-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
               License
             </FieldLabel>
           </Field>
+
         </FieldGroup>
       </FieldSet>
+
       <Button
-        className="w-full mt-4 bg-primary font-medium py-2 rounded-lg text-xs"
+        className="w-full mt-4 bg-primary text-primary-foreground font-semibold py-2 rounded-lg text-xs cursor-pointer shadow-md hover:opacity-90 transition-all"
         onClick={handleGenerate}
         disabled={isLoading}
       >
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Sparkle />
+          <Sparkle className="mr-1.5 h-3.5 w-3.5" />
         )}
         Generate README
       </Button>

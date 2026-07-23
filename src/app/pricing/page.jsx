@@ -12,6 +12,7 @@ import { useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react"; // 👈 Loading Spinner Icon
+import Navbar from "@/components/Navbar";
 
 export default function Page() {
   const router = useRouter();
@@ -135,7 +136,10 @@ export default function Page() {
 
   return (
     <div className="relative min-h-screen">
-      {/* 🚀 Redirection Overlay Loader */}
+      <div className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/80 dark:bg-black/50 backdrop-blur-xl">
+        <Navbar />
+      </div>
+      {/*  Redirection Overlay Loader */}
       {isRedirecting && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md">
           <div className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-card border border-border shadow-2xl">

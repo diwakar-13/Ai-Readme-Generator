@@ -57,14 +57,14 @@ export default function PricingTable({ currentPlan = "FREE", onUpgrade }) {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center max-w-5xl py-12 mx-auto px-4 bg-background text-foreground">
+    <div className="relative flex flex-col items-center justify-center max-w-5xl py-12 mx-auto px-4 bg-background text-foreground mt-20 lg:mt-30 ">
       <div className="flex flex-col items-center justify-center max-w-2xl mx-auto">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
           <div className="flex items-center gap-3">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Flexible Pricing for Developers
             </h2>
-            <AnimatedThemeToggler />
+         
           </div>
 
           <p className="text-base md:text-lg text-center text-muted-foreground mt-4">
