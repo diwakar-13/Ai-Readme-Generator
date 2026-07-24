@@ -43,7 +43,7 @@ export function NavMain({ currentProject }) {
           action: {
             label: "Upgrade to Pro",
             onClick: () =>
-              router.push(`/pricing?redirect=${encodeURIComponent(pathname)}`),
+              router.push(`/pricing?redirect=/dashboard/${params.projectId}`),
           },
         });
         setIsLoading(false);
@@ -77,7 +77,10 @@ export function NavMain({ currentProject }) {
   return (
     <SidebarGroup>
       <Field>
-        <FieldLabel htmlFor="input-demo-api-key" className="font-semibold text-xs text-foreground">
+        <FieldLabel
+          htmlFor="input-demo-api-key"
+          className="font-semibold text-xs text-foreground"
+        >
           Repo Name-
         </FieldLabel>
         <h2 className="text-sm font-semibold p-2.5 border border-border rounded-lg bg-muted/60 text-foreground cursor-not-allowed mt-1 truncate">
@@ -86,7 +89,10 @@ export function NavMain({ currentProject }) {
       </Field>
 
       <FieldSet className="mt-5">
-        <FieldLegend variant="label" className="font-semibold text-xs text-foreground">
+        <FieldLegend
+          variant="label"
+          className="font-semibold text-xs text-foreground"
+        >
           Readme Sections-
         </FieldLegend>
         <FieldDescription className="text-[11px] text-muted-foreground mb-2">
@@ -94,7 +100,6 @@ export function NavMain({ currentProject }) {
         </FieldDescription>
 
         <FieldGroup className="gap-2.5 max-h-[220px] bg-muted/40 dark:bg-zinc-900/80 border border-border rounded-xl p-3 overflow-y-auto custom-sidebar-scroll">
-          
           <Field orientation="horizontal" className="flex items-center gap-2">
             <Checkbox
               id="project-overview-checkbox"
@@ -117,7 +122,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.features}
               onCheckedChange={() => toggleSection("features")}
             />
-            <FieldLabel htmlFor="features-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="features-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Features
             </FieldLabel>
           </Field>
@@ -129,7 +137,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.installation}
               onCheckedChange={() => toggleSection("installation")}
             />
-            <FieldLabel htmlFor="installation-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="installation-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Installation
             </FieldLabel>
           </Field>
@@ -141,7 +152,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.usage}
               onCheckedChange={() => toggleSection("usage")}
             />
-            <FieldLabel htmlFor="usage-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="usage-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Usage
             </FieldLabel>
           </Field>
@@ -153,7 +167,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.techStack}
               onCheckedChange={() => toggleSection("techStack")}
             />
-            <FieldLabel htmlFor="tech-stack-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="tech-stack-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Tech Stack
             </FieldLabel>
           </Field>
@@ -165,7 +182,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.projectStructure}
               onCheckedChange={() => toggleSection("projectStructure")}
             />
-            <FieldLabel htmlFor="project-structure" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="project-structure"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Project Structure
             </FieldLabel>
           </Field>
@@ -177,7 +197,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.apiReference}
               onCheckedChange={() => toggleSection("apiReference")}
             />
-            <FieldLabel htmlFor="api-reference-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="api-reference-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               API Reference
             </FieldLabel>
           </Field>
@@ -189,7 +212,10 @@ export function NavMain({ currentProject }) {
               checked={activeSections.contributing}
               onCheckedChange={() => toggleSection("contributing")}
             />
-            <FieldLabel htmlFor="contributing-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="contributing-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               Contributing
             </FieldLabel>
           </Field>
@@ -201,11 +227,13 @@ export function NavMain({ currentProject }) {
               checked={activeSections.license}
               onCheckedChange={() => toggleSection("license")}
             />
-            <FieldLabel htmlFor="license-checkbox" className="font-medium text-xs text-foreground cursor-pointer">
+            <FieldLabel
+              htmlFor="license-checkbox"
+              className="font-medium text-xs text-foreground cursor-pointer"
+            >
               License
             </FieldLabel>
           </Field>
-
         </FieldGroup>
       </FieldSet>
 
