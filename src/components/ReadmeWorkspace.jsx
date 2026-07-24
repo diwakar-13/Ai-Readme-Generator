@@ -217,7 +217,7 @@ export default function ReadmeWorkspace() {
 
         <p className="max-w-2xl text-sm sm:text-base text-muted-foreground">
           Select sections from the left sidebar and click{" "}
-          <span className="font-semibold text-primary">Generate README</span> to
+          <span className="font-semibold text-orange-500">Generate README</span> to
           create a professional README for your project.
         </p>
       </div>
