@@ -43,14 +43,14 @@ const Navbar = () => {
         <div className="hidden items-center gap-8 lg:flex">
           <Link
             href={pricingHref}
-            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all"
+            className="text-base font-medium transition-colors dark:hover:text-orange-500 hover:text-orange-500 transition-all"
           >
             Pricing
           </Link>
 
           <Link
-            href="/contact-us"
-            className="text-base font-medium transition-colors dark:hover:text-primary hover:text-black transition-all"
+            href="/contact"
+            className="text-base font-medium transition-colors dark:hover:text-orange-500 hover:text-orange-500 transition-all"
           >
             Contact us
           </Link>

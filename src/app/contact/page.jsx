@@ -118,7 +118,7 @@ export default function ContactPage() {
                   href="mailto:diwakarpandey410@gmail.com"
                   className="font-medium text-foreground dark:text-white hover:underline transition-all"
                 >
-                  diwakarpandey410@gmail.com
+                  diwakarpandey673@gmail.com
                 </a>
               </p>
             </div>

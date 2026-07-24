@@ -19,6 +19,7 @@ import {
   Clock,
   Code2,
   FolderGit2,
+  Sparkles,
 } from "lucide-react";
 
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
@@ -72,16 +73,15 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden  ">
+    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground flex flex-col justify-between">
       <AnoAI />
 
       <div className="absolute inset-x-0 top-0 z-50">
         <Navbar />
       </div>
 
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center px-6 pt-36 pb-24">
+      <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center px-6 pt-36 pb-24">
         {/* Badge */}
-
         <div className="group relative mb-10 flex items-center justify-center rounded-full px-4 py-1.5 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-all duration-500 hover:shadow-[inset_0_-5px_10px_#8fdfff3f]">
           <span
             className={cn(
@@ -100,28 +100,25 @@ export default function Home() {
           <AnimatedGradientText className="text-sm font-medium">
             AI Powered GitHub Documentation
           </AnimatedGradientText>
-          <ChevronRight className="ml-1 h-4 w-4 text-neutral-500 transition-transform group-hover:translate-x-1" />
+          <ChevronRight className="ml-1 h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
         </div>
 
         {/* Heading */}
-
         <h1 className="max-w-6xl text-center text-5xl font-extrabold tracking-tight text-foreground leading-[1.05] sm:text-6xl md:text-7xl">
           Generate Professional README Files
-          <span className="block bg-gradient-to-r from-orange-300 via-orange-500 to-orange-900 bg-clip-text text-transparent">
+          <span className="block bg-gradient-to-r from-orange-400 via-orange-500 to-amber-600 bg-clip-text text-transparent">
             From Any GitHub Repository
           </span>
         </h1>
 
         {/* Description */}
-
-        <p className="mt-8 max-w-3xl text-center text-lg leading-8 text-muted-foreground ">
+        <p className="mt-8 max-w-3xl text-center text-lg leading-8 text-muted-foreground">
           Paste your GitHub repository URL and let AI inspect your codebase,
           understand your architecture, detect your tech stack and generate a
           beautiful production-ready README in seconds.
         </p>
 
         {/* Input */}
-
         <div className="mt-12 w-full max-w-4xl">
           <RepoTextarea
             placeholder="Paste your GitHub repository URL..."
@@ -137,18 +134,17 @@ export default function Home() {
         )}
 
         {isLoading && (
-          <div className="mt-6 rounded-xl border border-blue-900/40 bg-blue-950/20 px-5 py-3 text-sm text-blue-400 animate-pulse">
-            Analyzing repository architecture...
+          <div className="mt-6 rounded-xl border border-orange-500/30 bg-orange-500/10 px-5 py-3 text-sm text-orange-500 animate-pulse flex items-center gap-2">
+            <Sparkles className="w-4 h-4" /> Analyzing repository
+            architecture...
           </div>
         )}
 
         {/* Recent Projects */}
-
-        <section className="mt-24 w-full max-w-6xl border-t border-neutral-800/60 pt-10">
+        <section className="mt-24 w-full max-w-6xl border-t border-border pt-10">
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 dark:text-neutral-400" />
-
+              <Clock className="h-4 w-4 text-muted-foreground" />
               <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">
                 Your Recent Projects
               </h2>
@@ -159,24 +155,23 @@ export default function Home() {
                 {recentProjects.length} Projects
               </span>
             )}
-          </div>{" "}
+          </div>
+
           {fetchingProjects ? (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-32 animate-pulse rounded-2xl border bg-[#171717] border-border"
+                  className="h-32 animate-pulse rounded-2xl border bg-card border-border"
                 />
               ))}
             </div>
           ) : recentProjects.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-[#171717] py-16 px-8 text-center backdrop-blur-md">
-              <FolderGit2 className="mx-auto mb-4 h-8 w-8 text-neutral-500" />
-
+            <div className="rounded-2xl border border-dashed border-border bg-card/50 py-16 px-8 text-center backdrop-blur-md">
+              <FolderGit2 className="mx-auto mb-4 h-8 w-8 text-muted-foreground" />
               <h3 className="text-lg font-semibold text-foreground">
                 No Projects Yet
               </h3>
-
               <p className="mt-2 text-sm text-muted-foreground">
                 Generate your first README to see it appear here.
               </p>
@@ -187,25 +182,24 @@ export default function Home() {
                 <Link
                   key={project.id}
                   href={`/dashboard/${project.id}`}
-                  className="group rounded-2xl border border-border bg-accent p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:border-primary/40"
+                  className="group rounded-2xl border border-border bg-card p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 shadow-sm"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <Code2 className="h-4 w-4 shrink-0 text-primary" />
-
+                      <Code2 className="h-4 w-4 shrink-0 text-orange-500" />
                       <h3 className="truncate text-sm font-semibold text-foreground">
                         {project.repoName || "Untitled Repository"}
                       </h3>
                     </div>
 
-                    <ArrowRight className="h-4 w-4 text-foreground transition-all group-hover:translate-x-1 group-hover:text-primary" />
+                    <ArrowRight className="h-4 w-4 text-foreground transition-all group-hover:translate-x-1 group-hover:text-orange-500" />
                   </div>
 
                   <p className="mt-3 line-clamp-2 break-all font-mono text-xs text-muted-foreground">
                     {project.repoUrl}
                   </p>
 
-                  <div className="mt-6 flex items-center justify-between border-t border-neutral-800 pt-4 text-xs text-muted-foreground">
+                  <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
                     <span>
                       {project.createdAt
                         ? new Date(project.createdAt).toLocaleDateString(
@@ -219,7 +213,7 @@ export default function Home() {
                         : "Recent"}
                     </span>
 
-                    <span className="font-medium text-orange-400">
+                    <span className="font-medium text-orange-500">
                       Open Workspace →
                     </span>
                   </div>
@@ -229,6 +223,42 @@ export default function Home() {
           )}
         </section>
       </main>
+
+      {/* 🌟 Compliance Mandatory Footer for Razorpay Approval */}
+      <footer className="relative z-20 border-t border-border bg-background/80 backdrop-blur-lg py-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} RepoScribe. Built for developers
+            worldwide.
+          </p>
+          <div className="flex items-center gap-6 font-medium">
+            <Link
+              href="/terms"
+              className="hover:text-orange-500 transition-colors"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              href="/privacy"
+              className="hover:text-orange-500 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/refund"
+              className="hover:text-orange-500 transition-colors"
+            >
+              Refund Policy
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-orange-500 transition-colors"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
