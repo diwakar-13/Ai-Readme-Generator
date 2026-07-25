@@ -3,9 +3,8 @@
 import { db } from "@/db";
 import { refundRequests, users } from "@/db/schema";
 import { getRefundEmailHTML } from "@/email/refundEmailTemplate";
-import { razorpay } from "@/lib/razorpay";
 import { resend } from "@/lib/resend";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 export async function getUserPlan() {
@@ -40,31 +39,72 @@ export async function getUserPlan() {
     return { success: false, plan: "FREE", credits: 3 };
   }
 }
-export async function createRazorpayOrder(amountInRupees = 199) {
+export async function createCashfreeOrder(
+  billPlan = "monthly",
+  amountInRupees = 199,
+) {
   try {
     const { userId } = await auth();
+    const user = await currentUser();
+
     if (!userId) {
       return { success: false, error: "Unauthorized" };
     }
 
-    const options = {
-      amount: amountInRupees * 100,
-      currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-      notes: {
-        userId: userId,
-      },
-    };
+    const orderId = `order_${Date.now()}_${userId.slice(-5)}`;
 
-    const order = await razorpay.orders.create(options);
+    // 🎯 Phone number fallback logic
+    const userPhone = user?.primaryPhoneNumber?.phoneNumber
+      ? user.primaryPhoneNumber.phoneNumber.replace("+91", "").trim()
+      : "9999999999"; // Fallback dummy number for Cashfree API validation
+
+    const isProd = process.env.CASHFREE_ENV === "PRODUCTION";
+    const apiUrl = isProd
+      ? "https://api.cashfree.com/pg/orders"
+      : "https://sandbox.cashfree.com/pg/orders";
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "x-client-id": process.env.NEXT_PUBLIC_CASHFREE_APP_ID?.trim(),
+        "x-client-secret": process.env.CASHFREE_SECRET_KEY?.trim(),
+        "x-api-version": "2023-08-01",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        order_amount: Number(amountInRupees),
+        order_currency: "INR",
+        order_id: orderId,
+        customer_details: {
+          customer_id: userId,
+          customer_name: user?.fullName || user?.firstName || "Developer User",
+          customer_email:
+            user?.primaryEmailAddress?.emailAddress || "user@example.com",
+          customer_phone: userPhone, // Safe Dynamic + Fallback Phone
+        },
+        order_meta: {
+          return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/pricing?order_id={order_id}`,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("❌ CASHFREE API RESPONSE ERROR:", data);
+      return {
+        success: false,
+        error: data.message || "Order creation failed at gateway.",
+      };
+    }
+
     return {
       success: true,
-      orderId: order.id,
-      amount: order.amount,
-      currency: order.currency,
+      paymentSessionId: data.payment_session_id,
+      orderId: data.order_id,
     };
   } catch (error) {
-    console.error("Razorpay Order Creation Error:", error);
+    console.error("❌ SERVER FETCH EXCEPTION:", error);
     return { success: false, error: "Order create nahi ho paaya." };
   }
 }
@@ -176,20 +216,14 @@ export async function requestRefundAndRevoke(reason) {
         reason: reason,
         requestDate: new Date(),
       });
-      console.log("-----------------------------------------");
-      console.log("🚀 Attempting to send email via Resend...");
-      console.log("Target Email (ADMIN_EMAIL):", process.env.ADMIN_EMAIL);
+
       const emailResponse = await resend.emails.send({
         from: "RepoScribe <onboarding@resend.dev>",
         to: [process.env.ADMIN_EMAIL],
         subject: `🚨 Refund Requested by ${userData.email}`,
         html: emailHtml,
       });
-      console.log(
-        "📩 Resend Full Response:",
-        JSON.stringify(emailResponse, null, 2),
-      );
-      console.log("-----------------------------------------");
+
       if (emailResponse.error) {
         console.error("❌ Resend Error:", emailResponse.error);
       } else {

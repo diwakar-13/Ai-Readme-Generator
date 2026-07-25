@@ -42,6 +42,7 @@ export function NavMain({ currentProject }) {
         toast.error(creditRes.error, {
           action: {
             label: "Upgrade to Pro",
+
             onClick: () =>
               router.push(`/pricing?redirect=/dashboard/${params.projectId}`),
           },

@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
