@@ -37,7 +37,6 @@ export default function Home() {
     async function loadProjects() {
       try {
         const res = await getUserAllProjects();
-        console.log(res);
 
         if (res?.success) {
           setRecentProjects(res.projects || []);

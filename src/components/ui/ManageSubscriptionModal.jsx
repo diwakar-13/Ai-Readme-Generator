@@ -10,12 +10,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2, ShieldAlert, AlertCircle } from "lucide-react";
-import { cancelSubscription, requestRefundAndRevoke } from "@/actions/razorpayAction";
- function ManageSubscriptionModal({
-  open,
-  onOpenChange,
-  userPlanDetails,
-}) {
+import {
+  cancelSubscription,
+  requestRefundAndRevoke,
+} from "@/actions/cashfreeAction";
+function ManageSubscriptionModal({ open, onOpenChange, userPlanDetails }) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("manage"); // 'manage' | 'refund'
   const [refundReason, setRefundReason] = useState("");

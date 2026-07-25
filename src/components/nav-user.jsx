@@ -25,7 +25,7 @@ import {
   SparklesIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getUserPlan } from "@/actions/razorpayAction";
+import { getUserPlan } from "@/actions/cashfreeAction";
 import ManageSubscriptionModal from "./ui/ManageSubscriptionModal";
 
 export function NavUser() {

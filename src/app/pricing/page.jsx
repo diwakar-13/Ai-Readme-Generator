@@ -1,18 +1,18 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import PricingTable from "@/components/PricingTable";
 import {
-  createRazorpayOrder,
   verifyAndUpgradePlan,
   getUserPlan,
-} from "@/actions/razorpayAction";
+  createCashfreeOrder,
+} from "@/actions/cashfreeAction";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
-import { useTheme } from "next-themes";
 import { Loader2, CheckCircle2, Sparkles, Rocket } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { load } from "@cashfreepayments/cashfree-js";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-//  Success Popup Modal Component
+// 🎯 Success Popup Modal Component
 function PaymentSuccessModal({ open }) {
   return (
     <Dialog open={open}>
@@ -54,20 +54,50 @@ function PaymentSuccessModal({ open }) {
   );
 }
 
-// 1️ Client Component jahan useSearchParams execution context mein hai
 function PricingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUser();
-  const { resolvedTheme } = useTheme();
 
   const redirectPath = searchParams.get("redirect") || "/";
+  const returnOrderId = searchParams.get("order_id");
 
   const [userPlan, setUserPlan] = useState("FREE");
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // 👈 Success Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Database se live plan status fetch karna
+  // Reusable DB Upgrade & Redirect Function
+  const completeUpgrade = useCallback(
+    async (planType = "monthly") => {
+      const verifyToastId = toast.loading("Verifying transaction...");
+
+      const upgradeRes = await verifyAndUpgradePlan(planType);
+
+      if (upgradeRes.success) {
+        toast.dismiss(verifyToastId);
+        setShowSuccessModal(true);
+
+        const updatedPlanRes = await getUserPlan();
+        if (updatedPlanRes.success) {
+          setUserPlan(updatedPlanRes.plan);
+        }
+
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          setIsRedirecting(true);
+          router.refresh();
+          router.push(redirectPath);
+        }, 2500);
+      } else {
+        toast.error("Payment processed, but plan update failed.", {
+          id: verifyToastId,
+        });
+      }
+    },
+    [redirectPath, router]
+  );
+
+  // Fetch initial plan
   useEffect(() => {
     async function fetchPlan() {
       const res = await getUserPlan();
@@ -75,101 +105,65 @@ function PricingContent() {
         setUserPlan(res.plan);
       }
     }
-
     if (user) {
       fetchPlan();
     }
   }, [user]);
+
+  // Fallback handler for full page redirects
+  useEffect(() => {
+    if (returnOrderId) {
+      completeUpgrade("monthly");
+    }
+  }, [returnOrderId, completeUpgrade]);
 
   const handleUpgrade = async (billPlan) => {
     const toastId = toast.loading("Initializing secure checkout...");
 
     try {
       const selectedAmount = billPlan === "monthly" ? 199 : 1999;
-      const res = await createRazorpayOrder(selectedAmount);
 
-      if (!res.success) {
-        toast.error("Unable to initiate order. Please try again.", {
-          id: toastId,
-        });
+      const res = await createCashfreeOrder(billPlan, selectedAmount);
+
+      if (!res.success || !res.paymentSessionId) {
+        toast.error(
+          res.error || "Unable to initiate order. Please try again.",
+          { id: toastId }
+        );
         return;
       }
 
       toast.dismiss(toastId);
 
-      const primaryBrandColor =
-        resolvedTheme === "dark" ? "#e06138" : "#d9532f";
+      const cashfree = await load({
+        mode:
+          process.env.NEXT_PUBLIC_CASHFREE_ENV === "PRODUCTION"
+            ? "production"
+            : "sandbox",
+      });
 
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: res.amount,
-        currency: res.currency,
-        name: "RepoScribe",
-        description: `Pro Plan Subscription (${billPlan === "monthly" ? "Monthly" : "Annual"})`,
-        order_id: res.orderId,
-
-        prefill: {
-          name: user?.fullName || user?.firstName || "",
-          email: user?.primaryEmailAddress?.emailAddress || "",
-          contact: user?.primaryPhoneNumber?.phoneNumber || "",
-        },
-
-        theme: {
-          color: primaryBrandColor,
-        },
-
-        handler: async function (response) {
-          const verifyToastId = toast.loading("Verifying transaction...");
-
-          // Pass `billPlan` ("monthly" ya "annually") to server action
-          const upgradeRes = await verifyAndUpgradePlan(billPlan);
-
-          if (upgradeRes.success) {
-            toast.dismiss(verifyToastId);
-
-            // 🚀 Show Success Popup Modal
-            setShowSuccessModal(true);
-
-            // Re-fetch latest plan from DB
-            const updatedPlanRes = await getUserPlan();
-            if (updatedPlanRes.success) {
-              setUserPlan(updatedPlanRes.plan);
-            }
-
-            // ⏱ 2.5 seconds baad popup band hoke redirect hoga
-            setTimeout(() => {
-              setShowSuccessModal(false);
-              setIsRedirecting(true);
-              router.refresh();
-              router.push(redirectPath);
-            }, 2500);
-          } else {
-            toast.error(
-              "Payment processed, but plan update failed. Support team has been notified.",
-              {
-                id: verifyToastId,
-              },
-            );
-          }
-        },
-
-        modal: {
-          ondismiss: function () {
-            toast.info("Checkout cancelled.");
-          },
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      //  Modal Checkout Callback Handler
+      cashfree.checkout({
+        paymentSessionId: res.paymentSessionId,
+        redirectTarget: "_modal",
+      }).then((result) => {
+        if (result.error) {
+          toast.error(result.error.message || "Payment cancelled or failed.");
+        }
+        if (result.redirect) {
+          // Hard redirect fallback by SDK
+          console.log("Payment completed via redirect");
+        }
+        if (result.paymentDetails) {
+          // Modal Success! Instant DB Upgrade Call
+          completeUpgrade(billPlan);
+        }
+      });
     } catch (err) {
       console.error("Payment error:", err);
-      toast.error(
-        "Something went wrong with the payment gateway. Please try again.",
-        {
-          id: toastId,
-        },
-      );
+      toast.error("Something went wrong with payment. Please try again.", {
+        id: toastId,
+      });
     }
   };
 
@@ -179,10 +173,8 @@ function PricingContent() {
         <Navbar />
       </div>
 
-      {/*  Payment Success Popup Dialog */}
       <PaymentSuccessModal open={showSuccessModal} />
 
-      {/* Redirection Overlay Loader */}
       {isRedirecting && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md">
           <div className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-card border border-border shadow-2xl">
@@ -204,7 +196,6 @@ function PricingContent() {
   );
 }
 
-// 2️ Default Export Wrapped with Suspense Boundary (Prevents Build Error)
 export default function Page() {
   return (
     <Suspense
