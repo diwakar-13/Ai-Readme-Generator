@@ -24,6 +24,7 @@ import {
 
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { cn } from "@/lib/utils";
+import { GravityStarsBackground } from "@/components/animate-ui/components/backgrounds/gravity-stars";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +74,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground flex flex-col justify-between">
-      <AnoAI />
+      <div className="fixed inset-0 z-0">
+        <GravityStarsBackground />
+      </div>
 
       <div className="absolute inset-x-0 top-0 z-50">
         <Navbar />
